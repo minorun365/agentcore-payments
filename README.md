@@ -4,7 +4,7 @@ Amazon Bedrock AgentCore Payments のプレビュー段階で、公式 SDK 公�
 
 ## これは何？
 
-2026年5月、AWS が AgentCore Payments のプレビューを発表しました。しかし発表時点では `boto3` / `bedrock-agentcore` SDK に Payments 関連メソッドが含まれておらず、AWS CLI のサブコマンドも未公開のため、SDK ベースで動かそうとすると詰まります。
+日本時間2026/5/7夜、AWS が AgentCore Payments のプレビューを発表しました。しかし発表時点では `boto3` / `bedrock-agentcore` SDK に Payments 関連メソッドが含まれておらず、AWS CLI のサブコマンドも未公開のため、SDK ベースで動かそうとすると詰まります。
 
 このリポジトリは `botocore` の SigV4 ヘルパーで自前 HTTPS リクエストを組み立てることで、**SDK 公開を待たずに今すぐ Payments API を叩く**サンプルです。依存ライブラリは `boto3` 1個だけ。
 
@@ -23,7 +23,7 @@ Amazon Bedrock AgentCore Payments のプレビュー段階で、公式 SDK 公�
 | GetPaymentCredentialProvider | `POST /identities/GetPaymentCredentialProvider` | プロバイダー詳細取得 |
 | DeletePaymentCredentialProvider | `POST /identities/DeletePaymentCredentialProvider` | プロバイダー削除 |
 
-## 現時点で動かない API（GA 待ち）
+## 現時点で動かない API
 
 - CreatePaymentManager / GetPaymentManager / Update / Delete
 - CreatePaymentConnector / etc.
@@ -133,14 +133,10 @@ Coinbase 側の API キー / Wallet Secret も検証完了後にローテーシ�
 
 ## このサンプルの寿命
 
-公式 `boto3` に Payments メソッドが追加され次第、そちらに移行してください。このリポジトリはあくまで**プレビュー段階の検証用**です。
+公式 `boto3` に Payments メソッドが追加され次第、そちらに移行してください。このリポジトリはあくまで**プレビュー初日の検証用**です。
 
 ## 関連リソース
 
 - [AgentCore Payments 開発者ガイド](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/payments.html)
 - [x402 プロトコル](https://www.x402.org/)
 - [Coinbase Developer Platform](https://portal.cdp.coinbase.com/)
-
-## ライセンス
-
-MIT
