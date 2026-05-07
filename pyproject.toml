@@ -1,0 +1,8 @@
+[project]
+name = "agentcore-payments"
+version = "0.1.0"
+description = "Minimal SigV4 sample for Amazon Bedrock AgentCore Payments (preview)"
+requires-python = ">=3.10"
+dependencies = [
+    "boto3>=1.34.0",
+]
