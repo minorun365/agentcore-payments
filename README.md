@@ -1,14 +1,14 @@
 # AgentCore Paymentsを宇宙最速で試そう！
 
-Amazon Bedrock AgentCore Payments のプレビュー段階で、公式 SDK 公開を待たずに API を試せる**ミニマムサンプル**です。
+Amazon Bedrock AgentCore Payments のプレビュー段階で、公式 SDK 公開を待たずに API を試せるミニマムサンプルです。
 
-## これは何？
+## 背景
 
 日本時間2026/5/7夜、AWS が AgentCore Payments のプレビューを発表しました。しかし発表時点では `boto3` / `bedrock-agentcore` SDK に Payments 関連メソッドが含まれておらず、AWS CLI のサブコマンドも未公開のため、SDK ベースで動かそうとすると詰まります。
 
-このリポジトリは `botocore` の SigV4 ヘルパーで自前 HTTPS リクエストを組み立てることで、**SDK 公開を待たずに今すぐ Payments API を叩く**サンプルです。依存ライブラリは `boto3` 1個だけ。
+このリポジトリは `botocore` の SigV4 ヘルパーで自前 HTTPS リクエストを組み立てて、SDK の公開を待たずに Payments API を叩きます。依存ライブラリは `boto3` 1個だけ。
 
-## ⚠️ 注意
+## 注意
 
 - 公式リファレンスではありません。AWS 公式 SDK / CLI が Payments に対応次第、そちらの利用を推奨します。
 - 2026年5月時点で動作確認済みですが、プレビュー段階のため API 仕様は GA までに変更される可能性があります。
