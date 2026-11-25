@@ -1,12 +1,12 @@
 # AgentCore Paymentsを宇宙最速で試そう！
 
-Amazon Bedrock AgentCore Payments のプレビュー段階で、公式 SDK 公開を待たずに API を試せるミニマムサンプルです。
+Amazon Bedrock AgentCore Payments のプレビュー段階で、公式 SDK の公開を待たずに API を試せる最小限のサンプルです。
 
 ## 背景
 
-日本時間2026/5/7夜、AWS が AgentCore Payments のプレビューを発表しました。しかし発表時点では `boto3` / `bedrock-agentcore` SDK に Payments 関連メソッドが含まれておらず、AWS CLI のサブコマンドも未公開のため、SDK ベースで動かそうとすると詰まります。
+日本時間2026/5/7夜、AWS が AgentCore Payments のプレビューを発表しました。しかし発表時点では `boto3` / `bedrock-agentcore` SDK に Payments 関連メソッドが含まれておらず、AWS CLI のサブコマンドも未公開のため、SDK ベースではまだ動かせません。
 
-このリポジトリは `botocore` の SigV4 ヘルパーで自前 HTTPS リクエストを組み立てて、SDK の公開を待たずに Payments API を叩きます。依存ライブラリは `boto3` 1個だけ。
+このリポジトリでは、`botocore` の SigV4 ヘルパーを使って自前で HTTPS リクエストを組み立て、SDK の公開を待たずに Payments API を叩きます。依存ライブラリは `boto3` 1個だけです。
 
 ## 注意
 
@@ -17,11 +17,11 @@ Amazon Bedrock AgentCore Payments のプレビュー段階で、公式 SDK 公�
 
 | 操作 | パス | 概要 |
 |------|------|------|
-| ListPaymentManagers | `POST /payments/managers-list` | PaymentManager 一覧 |
-| ListPaymentCredentialProviders | `POST /identities/ListPaymentCredentialProviders` | 認証情報プロバイダー一覧 |
-| CreatePaymentCredentialProvider | `POST /identities/CreatePaymentCredentialProvider` | Coinbase 等の認証情報を登録 |
-| GetPaymentCredentialProvider | `POST /identities/GetPaymentCredentialProvider` | プロバイダー詳細取得 |
-| DeletePaymentCredentialProvider | `POST /identities/DeletePaymentCredentialProvider` | プロバイダー削除 |
+| ListPaymentManagers | `POST /payments/managers-list` | PaymentManager の一覧 |
+| ListPaymentCredentialProviders | `POST /identities/ListPaymentCredentialProviders` | 認証情報プロバイダーの一覧 |
+| CreatePaymentCredentialProvider | `POST /identities/CreatePaymentCredentialProvider` | Coinbase などの認証情報を登録 |
+| GetPaymentCredentialProvider | `POST /identities/GetPaymentCredentialProvider` | プロバイダーの詳細を取得 |
+| DeletePaymentCredentialProvider | `POST /identities/DeletePaymentCredentialProvider` | プロバイダーを削除 |
 
 ## 現時点で動かない API
 
@@ -29,37 +29,37 @@ Amazon Bedrock AgentCore Payments のプレビュー段階で、公式 SDK 公�
 - CreatePaymentConnector / etc.
 - CreatePaymentSession / CreatePaymentInstrument / ProcessPayment
 
-これらはサーバー側で operation がまだ展開されていません。リクエストすると `403 "Unable to determine service/operation name to be authorized"` が返ります。
+これらはサーバー側でまだ operation が展開されていません。リクエストすると `403 "Unable to determine service/operation name to be authorized"` が返ります。
 
 ## 前提
 
 - Python 3.10 以上
-- AWS アカウント（Payments 対応リージョン: **us-east-1 / us-west-2 / eu-central-1 / ap-southeast-2**。東京は非対応）
+- AWS アカウント（Payments 対応リージョンは us-east-1 / us-west-2 / eu-central-1 / ap-southeast-2 で、東京は非対応）
 - AWS CLI で SSO ログイン済みのプロファイル
-- Coinbase Developer Platform アカウント（API キー + Wallet Secret）
+- Coinbase Developer Platform アカウント（API キーと Wallet Secret）
 
 ## セットアップ
 
-依存関係をインストール（`uv` 推奨）：
+依存関係をインストールします。`uv` の利用を推奨します。
 
 ```bash
 uv sync
 ```
 
-`pip` を使う場合：
+`pip` を使う場合は以下を実行します。
 
 ```bash
 pip install -r <(echo "boto3>=1.34.0")
 ```
 
-`.env.example` をコピーして編集：
+`.env.example` をコピーして編集します。
 
 ```bash
 cp .env.example .env
 $EDITOR .env
 ```
 
-`.env` に Coinbase 認証情報を記入：
+`.env` に Coinbase の認証情報を記入します。
 
 ```env
 AWS_PROFILE=your-sso-profile
@@ -72,7 +72,7 @@ COINBASE_WALLET_SECRET=MIGHAgEA...
 
 ## 使い方
 
-`.env` を読み込んでから実行：
+`.env` を読み込んでからコマンドを実行します。
 
 ```bash
 set -a; source .env; set +a
@@ -97,7 +97,7 @@ uv run python main.py delete-provider --name my-coinbase
 
 ### 1. ホスト名と SigV4 signing service が違う
 
-エンドポイントは `bedrock-agentcore-control.<region>.amazonaws.com` ですが、SigV4 の signing service は `bedrock-agentcore`（`-control` 抜き）。間違えると以下のエラーが返ります。
+エンドポイントは `bedrock-agentcore-control.<region>.amazonaws.com` ですが、SigV4 の signing service は `-control` を除いた `bedrock-agentcore` です。間違えると以下のエラーが返ります。
 
 ```
 403 "Credential should be scoped to correct service: 'bedrock-agentcore'"
@@ -105,7 +105,7 @@ uv run python main.py delete-provider --name my-coinbase
 
 ### 2. Wallet Secret は EC P-256 base64
 
-Coinbase の `walletSecret` は **EC P-256 形式の秘密鍵を base64 エンコードしたもの**を要求します。Coinbase Developer Platform の Server Wallets セクションで生成してください（API キーとは別）。例：
+Coinbase の `walletSecret` には **EC P-256 形式の秘密鍵を base64 エンコードしたもの**を指定する必要があります。API キーとは別なので、Coinbase Developer Platform の Server Wallets セクションで生成してください。値の例は次のとおりです。
 
 ```
 MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg...
@@ -115,25 +115,25 @@ API キーをそのまま渡すと `400 "Invalid walletSecret format: Expected b
 
 ### 3. リージョン制限
 
-Payments は **us-east-1 / us-west-2 / eu-central-1 / ap-southeast-2** のみ対応。**東京（ap-northeast-1）は非対応**です。
+Payments は us-east-1 / us-west-2 / eu-central-1 / ap-southeast-2 のみ対応しており、東京（ap-northeast-1）は非対応です。
 
 ### 4. 認証情報は Secrets Manager に自動保存
 
-`CreatePaymentCredentialProvider` で渡したシークレットは AWS Secrets Manager に自動保管されます（`bedrock-agentcore-identity!default/payment/<vendor>/<name>-<random>/...` 形式）。`DeletePaymentCredentialProvider` でリソースを削除すると、対応する Secrets Manager のエントリも消える設計と思われます（要動作確認）。
+`CreatePaymentCredentialProvider` で渡したシークレットは、`bedrock-agentcore-identity!default/payment/<vendor>/<name>-<random>/...` の形式で AWS Secrets Manager に自動保管されます。`DeletePaymentCredentialProvider` でリソースを削除すると、対応する Secrets Manager のエントリも消える設計と思われますが、動作の確認が必要です。
 
 ## クリーンアップ
 
-検証で作成したリソースは終わったら必ず削除：
+検証で作成したリソースは、終わったら必ず削除してください。
 
 ```bash
 uv run python main.py delete-provider --name my-coinbase
 ```
 
-Coinbase 側の API キー / Wallet Secret も検証完了後にローテーションすることを強く推奨します（保管された旧キーが残るため）。
+保管された旧キーが残るため、Coinbase 側の API キー / Wallet Secret も検証完了後にローテーションすることを強く推奨します。
 
 ## このサンプルの寿命
 
-公式 `boto3` に Payments メソッドが追加され次第、そちらに移行してください。このリポジトリはあくまで**プレビュー初日の検証用**です。
+公式 `boto3` に Payments メソッドが追加され次第、そちらに移行してください。このリポジトリはあくまでプレビュー初日の検証用です。
 
 ## 関連リソース
 
